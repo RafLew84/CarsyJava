@@ -29,7 +29,7 @@ public class TimeLineFragment extends Fragment {
 
     private void setupRecyclerView() {
         RecyclerView recyclerView = binding.timeLineRecyclerView;
-        recyclerView.setAdapter(new TimeLineAdapter(DataProvider.generalCosts(100), requireContext()));
+        recyclerView.setAdapter(new TimeLineAdapter(DataProvider.cars.get(0).getCosts(), requireContext()));
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
     }
 

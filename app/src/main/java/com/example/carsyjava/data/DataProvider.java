@@ -8,23 +8,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public final class DataProvider {
     private DataProvider() {}
-//    public static List<Car> cars = Arrays.asList(
-//            new Car("Domowy", "Skoda", "Fabia", 2002, generalCosts(100)),
-//            new Car("Służbowy", "BMW", "Coupe", 2015, generalCosts(200)),
-//            new Car("Kolekcjonerski", "Fiat", "125p", 1985, generalCosts(120)),
-//            new Car("Sportowy", "Lamborghini", "Murcielago", 2012, generalCosts(100)),
-//            new Car("Zapasowy", "Skoda", "Superb", 2010, generalCosts(120)),
-//            new Car("SUV", "Skoda", "Kodiaq", 2020, generalCosts(300))
-//    );
+    public static List<Car> cars = Arrays.asList(
+            new Car("Domowy", "Skoda", "Fabia", 2002, generalCosts(100)),
+            new Car("Służbowy", "BMW", "Coupe", 2015, generalCosts(200)),
+            new Car("Kolekcjonerski", "Fiat", "125p", 1985, generalCosts(120)),
+            new Car("Sportowy", "Lamborghini", "Murcielago", 2012, generalCosts(100)),
+            new Car("Zapasowy", "Skoda", "Superb", 2010, generalCosts(120)),
+            new Car("SUV", "Skoda", "Kodiaq", 2020, generalCosts(300))
+    );
 
 
-    public static List<Cost> generalCosts(int size) {
-        List<Cost> costs = new ArrayList<>();
+    private static ArrayList<Cost> generalCosts(int size) {
+        ArrayList<Cost> costs = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             costs.add(new Cost(
                     CostType.values()[new Random().nextInt(CostType.values().length)],
@@ -36,34 +39,25 @@ public final class DataProvider {
     }
 
     public static List<CostListItem> getTimeLineList(List<Cost> costs) {
-        return costs.stream()
+        List<Cost> sortedCosts = costs.stream()
                 .sorted(Comparator.comparing(Cost::getDate))
-                .collect(Collectors.groupingBy(cost -> cost.getDate().getYear()))
-                .entrySet().stream()
-                .flatMap(entry -> costListItemsByMonths(entry.getKey(), entry.getValue()).stream())
                 .collect(Collectors.toList());
-    }
-
-    private static List<CostListItem> costListItemsByMonths(int year, List<Cost> costsOfYear) {
         List<CostListItem> items = new ArrayList<>();
-        items.add(new CostListItem.CostYearItem(String.valueOf(year)));
-        List<CostListItem> costListItemsByDays = costsOfYear.stream()
-                .collect(Collectors.groupingBy(cost -> cost.getDate().getMonth()))
-                .entrySet().stream()
-                .flatMap(entry -> costListItemsByDays(entry.getKey(), entry.getValue()).stream())
-                .collect(Collectors.toList());
-        items.addAll(costListItemsByDays);
-        return items;
-    }
-
-    private static List<CostListItem> costListItemsByDays(Month month, List<Cost> costsOfMonth) {
-        List<CostListItem> items = new ArrayList<>();
-        items.add(new CostListItem.CostMonthItem(polishMonthsNames(month)));
-        List<CostListItem> costListItems = costsOfMonth.stream()
-                .sorted(Comparator.comparingInt(c -> c.getDate().getDayOfMonth()))
-                .map(CostListItem.CostGeneralItem::new)
-                .collect(Collectors.toList());
-        items.addAll(costListItems);
+        int currentYear = -1;
+        int currentMonth = -1;
+        for (Cost cost : sortedCosts) {
+            LocalDate date = cost.getDate();
+            if (date.getYear() != currentYear) {
+                items.add(new CostListItem.CostYearItem(String.valueOf(date.getYear())));
+                currentYear = date.getYear();
+                currentMonth = -1;
+            }
+            if (date.getMonthValue() != currentMonth) {
+                items.add(new CostListItem.CostMonthItem(polishMonthsNames(date.getMonth())));
+                currentMonth = date.getMonthValue();
+            }
+            items.add(new CostListItem.CostGeneralItem(cost));
+        }
         return items;
     }
 }

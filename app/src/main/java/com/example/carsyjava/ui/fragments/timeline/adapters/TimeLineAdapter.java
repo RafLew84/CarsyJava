@@ -14,6 +14,7 @@ import com.example.carsyjava.databinding.GeneralItemTimelineRecyclerviewBinding;
 import com.example.carsyjava.databinding.MonthItemTimelineRecyclerviewBinding;
 import com.example.carsyjava.databinding.YearItemTimelineRecyclerviewBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TimeLineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
