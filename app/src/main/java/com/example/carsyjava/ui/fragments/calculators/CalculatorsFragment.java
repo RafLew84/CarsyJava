@@ -1,5 +1,6 @@
 package com.example.carsyjava.ui.fragments.calculators;
 
+import static com.example.carsyjava.util.MapUtil.getKeyByValue;
 import static com.example.carsyjava.util.StringUtil.decimalFormat;
 
 import android.os.Bundle;
@@ -70,15 +71,6 @@ public class CalculatorsFragment extends Fragment {
             binding.editInputLayout1.setHint(hint);
             setupCalculateButtonOnClickListener(position);
         };
-    }
-
-    private int getKeyByValue(Map<Integer, String> map) {
-        for (Map.Entry<Integer, String> entry : map.entrySet()) {
-            if (Objects.equals("Odległość", entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return -1;
     }
 
 
